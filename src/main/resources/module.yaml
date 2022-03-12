@@ -1,0 +1,20 @@
+kind: io.statefun.endpoints.v2/http
+spec:
+  functions: com.example/*
+  urlPathTemplate: https://192.168.1.7:8091
+  transport:
+    trust_cacerts: classpath:a_ca.pem
+    client_certs: classpath:a_client.crt
+    client_key: classpath:a_client.key
+    client_key_password: classpath:test
+---
+kind: io.statefun.kafka.v1/ingress
+spec:
+  id: com.example/my-ingress
+  address: kafka:9092
+  consumerGroupId: my-consumer-group
+  topics:
+    - topic: in
+      valueType: io.statefun.types/string
+      targets:
+        - com.example/greeter
