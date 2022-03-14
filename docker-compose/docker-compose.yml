@@ -45,3 +45,13 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  flinkjob:
+    image: flinkjob:1.0-SNAPSHOT
+    depends_on:
+      - taskmanager
+    entrypoint: /bin/bash -c "sleep 10 && flink run -m jobmanager:8081 -Dexecution.checkpointing.interval=1000 -Dstate.backend=rocksdb -Dstate.checkpoint-storage=filesystem -Dstate.checkpoints.dir=file:///tmp/ -Dstatefun.embedded=true /tmp/flinkjob-1.0-SNAPSHOT.jar"
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
